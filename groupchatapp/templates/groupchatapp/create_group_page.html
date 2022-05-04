@@ -1,0 +1,18 @@
+{%extends 'groupchatapp/base.html'%}
+{% load crispy_forms_tags %}
+{%block title%}Home{%endblock title%}
+{%block content%}
+<div class="container " id="form_container">
+    <div class="row ">
+        <div class="col-sm"></div>
+        <div class="col-sm-8">
+            <form method="post" action="{% url 'groupchatapp:create_group' %}" class="d-flex-row justify-content-center ">
+                {%csrf_token%}
+                {{form|crispy}}
+                <input type="submit" class="btn btn-primary" value="Create">
+            </form>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+</div>
+{%endblock content%}

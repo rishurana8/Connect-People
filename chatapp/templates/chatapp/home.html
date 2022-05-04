@@ -1,0 +1,77 @@
+{%extends 'chatapp/base.html'%}
+{%load crispy_forms_tags %}
+{%load chats_extra %}
+{%block title%}Home{%endblock title%}
+{%block content%}
+<div class="container" id="form_container">
+    <div class="row">
+        <div class="col-sm-3 "></div>
+        <div class="col-sm">
+            <form method="post" action="{% url 'chatapp:home' %}" class="d-flex-row form-inline">
+                {%csrf_token%}
+                {{form|crispy}}
+                <input type="submit" class="btn btn-primary" value="Search">
+            </form>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm list-group">
+            <div class="list-group-item text-center">
+                Your Chats:
+            </div>
+            {%for user_chat in user_chats%}
+                    <a class="list-group-item list-group-item-action"
+                       href="{%url 'chatapp:user_chat_redirecter' user.id user_chat.id %}">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-auto">{% other_member user_chat user %} </div>
+                                <div class="col text-primary">{{user_chat.latest_message}}</div>
+                                <span class="col-auto badge badge-primary">{% unread_messages_count user_chat user %}</span>
+                            </div>
+                        </div>
+                    </a>
+            {%endfor%}
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm list-group">
+            <div class="list-group-item text-center">
+                Your groups:
+            </div>
+            {%for user_group in user_groups%}
+                <a class="list-group-item list-group-item-action text-primary"
+                   href="{%url 'groupchatapp:group_chat_messages' user_group.group_name user.id%}">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto">{{user_group.group_name}}</div>
+                            <div class="col text-primary">{% latest_group_message_info user user_group %}</div>
+                        </div>
+                    </div>
+                </a>
+            {%endfor%}
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm-8 text-center">For joining or creating new group</div>
+        <div class="col-sm"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm-8">
+            <form method="get" action="{%url 'groupchatapp:group_chat'%}" class="form-inline justify-content-center">
+                <button type="submit" class="btn btn-primary text-center">For Group Chat</button>
+            </form>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+</div>
+{%endblock content%}

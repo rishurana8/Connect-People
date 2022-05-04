@@ -1,0 +1,60 @@
+{% extends 'chatapp/base.html'%}
+{%block title%}Chat Page{%endblock title%}
+{%block content%}
+
+<div class="container">
+    <div class="row">
+        <div class="col text-left">
+            {{reciever.username}}
+        </div>
+        <div class="col text-right">
+            {{sender.username}}
+        </div>
+    </div>
+    {%for message in messages%}
+        <div class="row">
+            {%if message.sender.id == sender.id%}
+                <div class="col"></div>
+                <div class="col text-right card text-black bg-light my-2" style="max-width: 22rem;">
+                    <div class="card-body">
+                        <p class="card-text">
+                            {{message.msg_text}}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-black">{{message.send_time}}</small>
+                            {% if message.unread%}
+                                <small class="text-black">Sent</small>
+                            {% else %}
+                                <small class="text-primary"> Read </small>
+                            {% endif %}
+                        <a class="btn btn-primary btn-sm"
+                           href="{%url 'chatapp:delete_chat_message' message.sender_id message.reciever_id message.id%}">
+                            Undo
+                        </a>
+                    </div>
+                </div>
+            {%else%}
+                <div class="col text-left card text-black bg-light my-2" style="max-width: 18rem;">
+                    <div class="card-body">
+                        <p class="card-text">
+                            {{message.msg_text}}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-black">{{message.send_time}}</small>
+                    </div>
+                </div>
+            {%endif%}
+        </div>
+    {% endfor %}
+</div>
+<form action="{% url 'chatapp:chatpage' sender.id reciever.id%}" method="post">
+    {%csrf_token%}
+    {{form}}
+    <input type="submit" value="Send" class="btn btn-primary">
+</form>
+<form action="{%url 'chatapp:chatpage' sender.id reciever.id%}">
+    <input type="submit" value="Refresh" class="btn btn-primary">
+</form>
+{%endblock content%}

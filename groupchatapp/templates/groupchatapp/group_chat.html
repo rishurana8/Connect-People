@@ -1,0 +1,75 @@
+{%extends 'groupchatapp/base.html'%}
+{%block title%}
+Group Chat
+{%endblock title%}
+{%block content%}
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            {%for message in messages%}
+                <div class="row">
+                    {%if message.sender.id == sender_id%}
+                        <div class="col"></div>
+                        <div class="col text-right card bg-light text-black my-2">
+                            <div class="card-header">{{message.sender.username}}</div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    {{message.message_text}}
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-black">{{message.send_time}}</small>
+                                <a class="btn btn-primary btn-sm"
+                                   href="{% url 'groupchatapp:delete_group_message' message.group.group_name message.pk%}">
+                                    Undo
+                                </a>
+                            </div>
+                        </div>
+                    {%else%}
+                        <div class="col text-left card bg-light text-black my-2">
+                            <div class="card-header">{{message.sender.username}}</div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    {{message.message_text}}
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-black">{{message.send_time}}</small>
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                    {%endif%}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-sm-3">
+            <div>
+                {%if user.username == admin %}
+                <form method="post" action="{%url 'groupchatapp:delete_group' group_name%}">
+                    {%csrf_token%}
+                    <input type="submit" value="Delete Group" class="btn btn-danger">
+                </form>
+                {%endif%}
+            </div>
+            <div class="list-group">
+                <div class="text-center list-group-item">Group Name: {{group_name}}</div>
+                <div class="text-center list-group-item">Group Code: {{group_code}}</div>
+                <div class="text-center list-group-item">Members</div>
+                {%for member in members%}
+                    <div class="member-names text-center list-group-item">
+                        {{member.username}}
+                    </div>
+                {%endfor%}
+            </div>
+        </div>
+    </div>
+</div>
+<form action="{% url 'groupchatapp:group_chat_messages' group_name sender_id %}" method="post">
+    {%csrf_token%}
+    {{form}}
+    <input type="submit" value="Send" class="btn btn-primary btn-md">
+</form>
+<form class="" action="{%url 'groupchatapp:group_chat_messages' group_name sender_id %}">
+    <input type="submit" value="Refresh" class="btn btn-primary btn-sm">
+</form>
+{%endblock content%}
